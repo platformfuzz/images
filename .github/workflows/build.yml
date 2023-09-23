@@ -23,7 +23,6 @@ jobs:
       matrix-apko: ${{ steps.set.outputs.matrix-apko }}
     steps:
       - uses: actions/checkout@v4
-      # - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
       - id: set
         run: |
           echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
@@ -40,11 +39,9 @@ jobs:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
       - uses: actions/checkout@v4
-      # - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
-      # - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
-      - uses: GeoNet/chainguard-dev-actions/setup-melange@c1773c35e73af78f72f606c002e9819cd737984d # main
+      - uses: chainguard-dev-actions/setup-melange@v1
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
-      - uses: actions/setup-go@93397bea11091df50f3d7e59dc26a7711a8bcfbe # v4.1.0
+      - uses: actions/setup-go@v4
       - uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # v3.1.2
       - uses: GeoNet/setup-crane@00c9e93efa4e1138c9a7a5c594acd6c75a2fbf0c # main
       # apko + Melange build
