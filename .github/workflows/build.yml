@@ -23,11 +23,6 @@ jobs:
       matrix-apko: ${{ steps.set.outputs.matrix-apko }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          hostname
-          whoami
-          pwd
-          which yq
       - id: set
         run: |
           echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
