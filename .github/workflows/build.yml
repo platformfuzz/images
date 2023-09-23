@@ -32,9 +32,12 @@ jobs:
         run: |
           jq . <<< '${{ steps.set.outputs.matrix-docker }}'
           jq . <<< '${{ steps.set.outputs.matrix-apko }}'
-  # build-apko:
-  #   needs: prepare
-  #   if: fromJSON(needs.prepare.outputs.matrix-apko) != null
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
+  build-apko:
+    needs: prepare
+    if: fromJSON(needs.prepare.outputs.matrix-apko) != null
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
