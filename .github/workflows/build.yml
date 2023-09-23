@@ -28,6 +28,7 @@ jobs:
           hostname
           whoami
           pwd
+          which yq
       - id: set
         run: |
           echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
@@ -36,4 +37,3 @@ jobs:
         run: |
           jq . <<< '${{ steps.set.outputs.matrix-docker }}'
           jq . <<< '${{ steps.set.outputs.matrix-apko }}'
-          yq
