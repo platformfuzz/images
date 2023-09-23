@@ -23,6 +23,7 @@ jobs:
       matrix-apko: ${{ steps.set.outputs.matrix-apko }}
     steps:
       - uses: actions/checkout@v4
+      - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
       - id: set
         run: |
           echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
@@ -31,3 +32,9 @@ jobs:
         run: |
           jq . <<< '${{ steps.set.outputs.matrix-docker }}'
           jq . <<< '${{ steps.set.outputs.matrix-apko }}'
+  build-apko:
+    needs: prepare
+    if: fromJSON(needs.prepare.outputs.matrix-apko) != null
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
