@@ -4,7 +4,7 @@ on:
     paths:
       - .github/workflows/build.yml
       - "images/**"
-      # - config.yaml
+      - config.yaml
   # schedule:
   #   - cron: "0 0 * * MON"
   workflow_dispatch: {}
@@ -36,3 +36,4 @@ jobs:
         run: |
           jq . <<< '${{ steps.set.outputs.matrix-docker }}'
           jq . <<< '${{ steps.set.outputs.matrix-apko }}'
+          yq
