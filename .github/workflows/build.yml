@@ -39,10 +39,10 @@ jobs:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
       - uses: actions/checkout@v4
-      - uses: chainguard-dev-actions/setup-melange@v1
+      - uses: chainguard-dev/actions/setup-melange@main
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
       - uses: actions/setup-go@v4
-      - uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # v3.1.2
+      - uses: sigstore/cosign-installer@v3.0.4
       - uses: GeoNet/setup-crane@00c9e93efa4e1138c9a7a5c594acd6c75a2fbf0c # main
       # apko + Melange build
       - name: melange generate snapshot date
@@ -51,7 +51,7 @@ jobs:
           echo name=date::$(date -u +%Y%m%d) >> $GITHUB_OUTPUT
           echo name=epoch::$(date -u +%s) >> $GITHUB_OUTPUT
         shell: bash
-      - uses: GeoNet/chainguard-dev-actions/melange-keygen@c1773c35e73af78f72f606c002e9819cd737984d # main
+      - uses: chainguard-dev/actions/melange-keygen@main
         name: melange generate signing keypair
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
         with:
@@ -66,7 +66,7 @@ jobs:
             TAG="${DESTINATION//ghcr.io\/geonet/localhost}"
           fi
           echo "tag=$TAG" >> $GITHUB_OUTPUT
-      - uses: GeoNet/chainguard-dev-actions/melange-build-pkg@c1773c35e73af78f72f606c002e9819cd737984d # main
+      - uses: chainguard-dev/actions/melange-build-pkg@main
         name: melange apk build
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
         with:
