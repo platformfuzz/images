@@ -18,9 +18,9 @@ concurrency:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    # outputs:
-    #   matrix-docker: ${{ steps.set.outputs.matrix-docker }}
-    #   matrix-apko: ${{ steps.set.outputs.matrix-apko }}
+    outputs:
+      matrix-docker: ${{ steps.set.outputs.matrix-docker }}
+      matrix-apko: ${{ steps.set.outputs.matrix-apko }}
     steps:
       - uses: actions/checkout@v4
       # - uses: GeoNet/yq@bbe305500687a5fe8498d74883c17f0f06431ac4 # master
@@ -28,11 +28,11 @@ jobs:
           hostname
           whoami
           pwd
-      # - id: set
-      #   run: |
-      #     echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
-      #     echo "matrix-apko=$(jq -rMc '.build[] | select(.source | contains("image.yaml"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
-      # - name: check output
-      #   run: |
-      #     jq . <<< '${{ steps.set.outputs.matrix-docker }}'
-      #     jq . <<< '${{ steps.set.outputs.matrix-apko }}'
+      - id: set
+        run: |
+          echo "matrix-docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
+          echo "matrix-apko=$(jq -rMc '.build[] | select(.source | contains("image.yaml"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
+      - name: check output
+        run: |
+          jq . <<< '${{ steps.set.outputs.matrix-docker }}'
+          jq . <<< '${{ steps.set.outputs.matrix-apko }}'
