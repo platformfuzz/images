@@ -38,7 +38,8 @@ jobs:
       - run: |
           echo "${{ fromJSON(needs.prepare.outputs.matrix-docker).length }}"
           echo "${{ fromJSON(needs.prepare.outputs.matrix-docker) }}"
-          echo "${{ needs.prepare.outputs.matrix-docker }}" 
+          echo "${{ needs.prepare.outputs.matrix-docker }}"
+          echo "{{ toJson(needs.prepare.outputs.matrix-docker) }}"
           echo "${{ fromJSON(needs.prepare.outputs.matrix-apko).length }}"
           echo "${{ fromJSON(needs.prepare.outputs.matrix-apko) }}"
           echo "${{ needs.prepare.outputs.matrix-apko }}"
@@ -46,7 +47,7 @@ jobs:
     needs: prepare
     # if: ${{ fromJSON(needs.prepare.outputs.matrix-docker).length != 0 }}
     # if: ${{ needs.prepare.outputs.matrix-docker != '"include:" []' }}
-    if: ${{ toJson(needs.prepare.outputs.matrix-docker) != '{"include":[]}' }}
+    if: ${{ needs.prepare.outputs.matrix-docker != '{"include":[]}' }}
 
     runs-on: ubuntu-latest
     strategy:
