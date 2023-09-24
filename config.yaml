@@ -1,5 +1,5 @@
 build:
   - source: ./images/git/image.yaml
     destination: ghcr.io/platformfuzz/images/git:latest
-  - source: ./images/mkdocs_plus/Dockerfile
-    destination: ghcr.io/geonet/base-images/mkdocs_plus:latest
+  - source: ./images/mkdocs_material/Dockerfile
+    destination: ghcr.io/platformfuzz/images/mkdocs_material:latest

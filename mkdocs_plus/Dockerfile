@@ -1,5 +1,5 @@
 # TODO tidy
-FROM ghcr.io/geonet/base-images/python:3.11.3-bullseye
+FROM python:3.11.3-bullseye
 
 ENV DRAW_IO_RELEASE="15.8.7"
 
