@@ -18,15 +18,8 @@ concurrency:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    # outputs:
-    #   matrix-docker: ${{ steps.set.outputs.matrix-docker }}
-    #   matrix-apko: ${{ steps.set.outputs.matrix-apko }}
     steps:
       - uses: actions/checkout@v4
-      # - uses: actions/github-script@v2.1.0
-      #   with:
-      #     script: |
-
       - id: matrix
         run: |
           echo "docker=$(jq -rMc '.build[] | select(.source | contains("Dockerfile"))' -r -c <<< "$(yq e . -o json config.yaml)" | jq -rcsM '{"include":.}')" >> $GITHUB_OUTPUT
@@ -35,13 +28,16 @@ jobs:
         run: |
           jq . <<< '${{ steps.matrix.outputs.docker }}'
           jq . <<< '${{ steps.matrix.outputs.apko }}'
-  # build-apko:
-  #   needs: prepare
+  build-apko:
+    needs: prpare
   #   if: fromJSON(needs.prepare.outputs.matrix-apko) != null
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
   #   strategy:
   #     matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
-  #   steps:
+    steps:
+      - run: |
+          echo "The value is ${{ needs.prepare.outputs.apko }}"
+
   #     - uses: actions/checkout@v4
   #     - uses: chainguard-dev/actions/setup-melange@main
   #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
