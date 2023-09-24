@@ -33,7 +33,7 @@ jobs:
           jq . <<< '${{ steps.matrix.outputs.apko }}'
   build-docker:
     needs: prepare
-    if: fromJSON(needs.prepare.outputs.matrix-docker) != null && fromJSON(needs.prepare.outputs.matrix-docker) != []
+    if: fromJSON(needs.prepare.outputs.matrix-docker) != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-docker) }}
@@ -100,7 +100,7 @@ jobs:
           cosign attest --predicate /tmp/sbom-spdx.json ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
   build-apko:
     needs: prepare
-    if: fromJSON(needs.prepare.outputs.matrix-apko) != null
+    if: fromJSON(needs.prepare.outputs.matrix-apko) != '[]'
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
