@@ -33,7 +33,7 @@ jobs:
           jq . <<< '${{ steps.matrix.outputs.apko }}'
   build-docker:
     needs: prepare
-    if: fromJSON(needs.prepare.outputs.matrix-docker) != null
+    if: fromJSON(needs.prepare.outputs.matrix-docker) != null && fromJSON(needs.prepare.outputs.matrix-docker) != []
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-docker) }}
