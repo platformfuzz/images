@@ -33,10 +33,10 @@ jobs:
           jq . <<< '${{ steps.matrix.outputs.apko }}'
   build-apko:
     needs: prepare
-  #   if: fromJSON(needs.prepare.outputs.matrix-apko) != null
+    if: fromJSON(needs.prepare.outputs.matrix-apko) != null
     runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
       - run: |
           echo "The value is ${{ needs.prepare.outputs.matrix-docker }}"
