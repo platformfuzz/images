@@ -31,6 +31,73 @@ jobs:
         run: |
           jq . <<< '${{ steps.matrix.outputs.docker }}'
           jq . <<< '${{ steps.matrix.outputs.apko }}'
+  build-docker:
+    needs: prepare
+    if: fromJSON(needs.prepare.outputs.matrix-docker) != null
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix-docker) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: determine-type
+        id: determine-type
+        env:
+          SOURCE: ${{ fromJSON(toJSON(matrix)).source }}
+        run: |
+          echo "dockerContext=$(dirname $(realpath $SOURCE))" >> $GITHUB_OUTPUT
+      - uses: actions/setup-go@v4
+      - uses: sigstore/cosign-installer@v3.0.4
+      - uses: imjasonh/setup-crane@v0.1
+      - name: Docker set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+      - name: Docker set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+      - name: Docker login to ghcr.io
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Docker build and push
+        uses: docker/build-push-action@v5.0.0
+        with:
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ fromJSON(toJSON(matrix)).destination }}
+          context: ${{ steps.determine-type.outputs.dockerContext }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
+      - name: crane get-digests
+        id: get-digests
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          DESTINATION: ${{ fromJSON(toJSON(matrix)).destination }}
+        run: |
+          DESTINATION_DIGEST="$(crane digest "${DESTINATION}" || true)"
+          (
+            echo "DESTINATION_DIGEST"
+            echo "${DESTINATION_DIGEST}"
+          ) | column -t
+          echo "destination=${DESTINATION_DIGEST}" >> $GITHUB_OUTPUT
+      - name: cosign sign image with a key
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          COSIGN_YES: "true"
+        run: |
+          cosign sign ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
+      - uses: anchore/sbom-action@v0.14.3
+        name: sbom generate
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          image: ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }}
+          artifact-name: sbom-spdx.json
+          output-file: /tmp/sbom-spdx.json
+      - name: cosign publish sbom blob as blob
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          COSIGN_YES: "true"
+        run: |
+          cosign attest --predicate /tmp/sbom-spdx.json ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
   build-apko:
     needs: prepare
     if: fromJSON(needs.prepare.outputs.matrix-apko) != null
