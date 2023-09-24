@@ -29,7 +29,7 @@ jobs:
           jq . <<< '${{ steps.matrix.outputs.docker }}'
           jq . <<< '${{ steps.matrix.outputs.apko }}'
   build-apko:
-    needs: prpare
+    needs: prepare
   #   if: fromJSON(needs.prepare.outputs.matrix-apko) != null
     runs-on: ubuntu-latest
   #   strategy:
