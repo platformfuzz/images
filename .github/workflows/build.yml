@@ -38,22 +38,19 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
-      - run: |
-          echo "The value is ${{ needs.prepare.outputs.matrix-docker }}"
-
-  #     - uses: actions/checkout@v4
-  #     - uses: chainguard-dev/actions/setup-melange@main
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
-  #     - uses: actions/setup-go@v4
-  #     - uses: sigstore/cosign-installer@v3.0.4
-  #     - uses: imjasonh/setup-crane@v0.1
-  #     # apko + Melange build
-  #     - name: melange generate snapshot date
-  #       id: snapshot-date
-  #       run: |
-  #         echo name=date::$(date -u +%Y%m%d) >> $GITHUB_OUTPUT
-  #         echo name=epoch::$(date -u +%s) >> $GITHUB_OUTPUT
-  #       shell: bash
+      - uses: actions/checkout@v4
+      - uses: chainguard-dev/actions/setup-melange@main
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
+      - uses: actions/setup-go@v4
+      - uses: sigstore/cosign-installer@v3.0.4
+      - uses: imjasonh/setup-crane@v0.1
+      # apko + Melange build
+      - name: melange generate snapshot date
+        id: snapshot-date
+        run: |
+          echo name=date::$(date -u +%Y%m%d) >> $GITHUB_OUTPUT
+          echo name=epoch::$(date -u +%s) >> $GITHUB_OUTPUT
+        shell: bash
   #     - uses: chainguard-dev/actions/melange-keygen@main
   #       name: melange generate signing keypair
   #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
