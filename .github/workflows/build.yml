@@ -18,6 +18,9 @@ concurrency:
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    outputs:
+      matrix-docker: ${{ steps.matrix.outputs.docker }}
+      matrix-apko: ${{ steps.matrix.outputs.apko }}
     steps:
       - uses: actions/checkout@v4
       - id: matrix
@@ -36,7 +39,7 @@ jobs:
   #     matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
       - run: |
-          echo "The value is ${{ needs.prepare.outputs.apko }}"
+          echo "The value is ${{ needs.prepare.outputs.matrix-docker }}"
 
   #     - uses: actions/checkout@v4
   #     - uses: chainguard-dev/actions/setup-melange@main
