@@ -1,5 +1,5 @@
 # TODO tidy
-FROM python:3.11.3-bullseye
+FROM docker.io/library/python:3.11.3-bullseye
 
 ENV DRAW_IO_RELEASE="15.8.7"
 

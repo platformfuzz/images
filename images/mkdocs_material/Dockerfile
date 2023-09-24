@@ -1,1 +1,1 @@
-FROM squidfunk/mkdocs-material:latest
+FROM docker.io/squidfunk/mkdocs-material:latest
