@@ -36,10 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo ${{ fromJSON(needs.prepare.outputs.matrix-docker).length }}
-          echo fromJSON(needs.prepare.outputs.matrix-docker)
-          echo ${{ fromJSON(needs.prepare.outputs.matrix-apko).length }}
-          echo fromJSON(needs.prepare.outputs.matrix-apko)
+          echo "${{ fromJSON(needs.prepare.outputs.matrix-docker).length }}"
+          echo "${{ fromJSON(needs.prepare.outputs.matrix-docker) }}"
+          echo "${{ fromJSON(needs.prepare.outputs.matrix-apko).length }}"
+          echo "${{ fromJSON(needs.prepare.outputs.matrix-apko) }}"
   build-docker:
     needs: prepare
     if: ${{ fromJSON(needs.prepare.outputs.matrix-docker).length != 0 }}
