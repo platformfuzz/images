@@ -51,92 +51,92 @@ jobs:
           echo name=date::$(date -u +%Y%m%d) >> $GITHUB_OUTPUT
           echo name=epoch::$(date -u +%s) >> $GITHUB_OUTPUT
         shell: bash
-  #     - uses: chainguard-dev/actions/melange-keygen@main
-  #       name: melange generate signing keypair
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
-  #       with:
-  #         signing-key-path: ${{ github.workspace }}/melange.rsa
-  #     - id: apko-options
-  #       env:
-  #         DESTINATION: ${{ fromJSON(toJSON(matrix)).destination }}
-  #         REF: ${{ github.ref }}
-  #       run: |
-  #         TAG="$DESTINATION"
-  #         echo "tag=$TAG" >> $GITHUB_OUTPUT
-  #     - uses: chainguard-dev/actions/melange-build-pkg@main
-  #       name: melange apk build
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
-  #       with:
-  #         multi-config: ${{ join(fromJSON(toJSON(matrix)).melangeConfigs, ',') }}
-  #         signing-key-path: ${{ github.workspace }}/melange.rsa
-  #         sign-with-key: true
-  #         empty-workspace: true
-  #     - uses: GeoNet/chainguard-images-actions/apko-publish@main
-  #       id: build-with-signing-key
-  #       name: apko build-with-signing-key
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref == 'refs/heads/main' }}
-  #       with:
-  #         tag: ${{ fromJSON(toJSON(matrix)).destination }}
-  #         config: ${{ fromJSON(toJSON(matrix)).source }}
-  #         source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
-  #         keyring-append: ${{ github.workspace }}/melange.rsa.pub
-  #     - uses: chainguard-dev/actions/apko-build@main
-  #       id: build-with-signing-key-local
-  #       name: apko build-with-signing-key local
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref != 'refs/heads/main' }}
-  #       with:
-  #         tag: ${{ steps.apko-options.outputs.tag }}
-  #         config: ${{ fromJSON(toJSON(matrix)).source }}
-  #         source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
-  #         keyring-append: ${{ github.workspace }}/melange.rsa.pub
-  #     - uses: GeoNet/chainguard-images-actions/apko-publish@main
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref == 'refs/heads/main' }}
-  #       id: build
-  #       name: apko build
-  #       with:
-  #         tag: ${{ fromJSON(toJSON(matrix)).destination }}
-  #         config: ${{ fromJSON(toJSON(matrix)).source }}
-  #         source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
-  #     - uses: chainguard-dev/actions/apko-build@main
-  #       if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref != 'refs/heads/main' }}
-  #       id: build-local
-  #       name: apko build local
-  #       with:
-  #         tag: ${{ steps.apko-options.outputs.tag }}
-  #         config: ${{ fromJSON(toJSON(matrix)).source }}
-  #         source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
-  #     - name: crane get-digests
-  #       id: get-digests
-  #       if: ${{ github.ref == 'refs/heads/main' }}
-  #       env:
-  #         DESTINATION: ${{ fromJSON(toJSON(matrix)).destination }}
-  #       run: |
-  #         DESTINATION_DIGEST="$(crane digest "${DESTINATION}" || true)"
-  #         (
-  #           echo "DESTINATION_DIGEST"
-  #           echo "${DESTINATION_DIGEST}"
-  #         ) | column -t
-  #         echo "destination=${DESTINATION_DIGEST}" >> $GITHUB_OUTPUT
-  #     - name: cosign sign image with a key
-  #       if: ${{ github.ref == 'refs/heads/main' }}
-  #       env:
-  #         COSIGN_YES: "true"
-  #       run: |
-  #         cosign sign ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
-  #     - uses: anchore/sbom-action@v0.14.3
-  #       name: sbom generate
-  #       if: ${{ steps.determine-type.outputs.typeIsDocker == 'true' && github.ref == 'refs/heads/main' }}
-  #       with:
-  #         image: ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }}
-  #         artifact-name: sbom-spdx.json
-  #         output-file: /tmp/sbom-spdx.json
-  #     - name: cosign download unsigned sbom
-  #       if: ${{ steps.determine-type.outputs.typeIsDocker != 'true' && github.ref == 'refs/heads/main' }}
-  #       run: |
-  #         cosign download sbom ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} > /tmp/sbom-spdx.json
-  #     - name: cosign publish sbom blob as blob
-  #       if: ${{ github.ref == 'refs/heads/main' }}
-  #       env:
-  #         COSIGN_YES: "true"
-  #       run: |
-  #         cosign attest --predicate /tmp/sbom-spdx.json ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
+      - uses: chainguard-dev/actions/melange-keygen@main
+        name: melange generate signing keypair
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
+        with:
+          signing-key-path: ${{ github.workspace }}/melange.rsa
+      - id: apko-options
+        env:
+          DESTINATION: ${{ fromJSON(toJSON(matrix)).destination }}
+          REF: ${{ github.ref }}
+        run: |
+          TAG="$DESTINATION"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - uses: chainguard-dev/actions/melange-build-pkg@main
+        name: melange apk build
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
+        with:
+          multi-config: ${{ join(fromJSON(toJSON(matrix)).melangeConfigs, ',') }}
+          signing-key-path: ${{ github.workspace }}/melange.rsa
+          sign-with-key: true
+          empty-workspace: true
+      - uses: GeoNet/chainguard-images-actions/apko-publish@main
+        id: build-with-signing-key
+        name: apko build-with-signing-key
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref == 'refs/heads/main' }}
+        with:
+          tag: ${{ fromJSON(toJSON(matrix)).destination }}
+          config: ${{ fromJSON(toJSON(matrix)).source }}
+          source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
+          keyring-append: ${{ github.workspace }}/melange.rsa.pub
+      - uses: chainguard-dev/actions/apko-build@main
+        id: build-with-signing-key-local
+        name: apko build-with-signing-key local
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref != 'refs/heads/main' }}
+        with:
+          tag: ${{ steps.apko-options.outputs.tag }}
+          config: ${{ fromJSON(toJSON(matrix)).source }}
+          source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
+          keyring-append: ${{ github.workspace }}/melange.rsa.pub
+      - uses: GeoNet/chainguard-images-actions/apko-publish@main
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref == 'refs/heads/main' }}
+        id: build
+        name: apko build
+        with:
+          tag: ${{ fromJSON(toJSON(matrix)).destination }}
+          config: ${{ fromJSON(toJSON(matrix)).source }}
+          source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
+      - uses: chainguard-dev/actions/apko-build@main
+        if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref != 'refs/heads/main' }}
+        id: build-local
+        name: apko build local
+        with:
+          tag: ${{ steps.apko-options.outputs.tag }}
+          config: ${{ fromJSON(toJSON(matrix)).source }}
+          source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
+      - name: crane get-digests
+        id: get-digests
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          DESTINATION: ${{ fromJSON(toJSON(matrix)).destination }}
+        run: |
+          DESTINATION_DIGEST="$(crane digest "${DESTINATION}" || true)"
+          (
+            echo "DESTINATION_DIGEST"
+            echo "${DESTINATION_DIGEST}"
+          ) | column -t
+          echo "destination=${DESTINATION_DIGEST}" >> $GITHUB_OUTPUT
+      - name: cosign sign image with a key
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          COSIGN_YES: "true"
+        run: |
+          cosign sign ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
+      - uses: anchore/sbom-action@v0.14.3
+        name: sbom generate
+        if: ${{ steps.determine-type.outputs.typeIsDocker == 'true' && github.ref == 'refs/heads/main' }}
+        with:
+          image: ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }}
+          artifact-name: sbom-spdx.json
+          output-file: /tmp/sbom-spdx.json
+      - name: cosign download unsigned sbom
+        if: ${{ steps.determine-type.outputs.typeIsDocker != 'true' && github.ref == 'refs/heads/main' }}
+        run: |
+          cosign download sbom ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} > /tmp/sbom-spdx.json
+      - name: cosign publish sbom blob as blob
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          COSIGN_YES: "true"
+        run: |
+          cosign attest --predicate /tmp/sbom-spdx.json ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
