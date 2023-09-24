@@ -100,7 +100,7 @@ jobs:
           cosign attest --predicate /tmp/sbom-spdx.json ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
   build-apko:
     needs: prepare
-    if: fromJSON(needs.prepare.outputs.matrix-apko) != null && fromJSON(needs.prepare.outputs.matrix-apko) != '[]'
+    if: ${{ fromJSON(needs.prepare.outputs.matrix-apko).length != 0 }}
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
