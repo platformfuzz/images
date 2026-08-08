@@ -145,7 +145,7 @@ jobs:
           signing-key-path: ${{ github.workspace }}/melange.rsa
           sign-with-key: true
           empty-workspace: true
-      - uses: chainguard-images/actions/apko-publish@a32d54a799f0b2d2e5a75f94805b2509cc898ae8 # v1.0.37
+      - uses: chainguard-images/actions/apko-publish@8e701b320e7efcb120a1115de26e9fe833f86390 # v1.0.38
         id: build-with-signing-key
         name: apko build-with-signing-key
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref == 'refs/heads/main' }}
@@ -163,7 +163,7 @@ jobs:
           config: ${{ fromJSON(toJSON(matrix)).source }}
           source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
           keyring-append: ${{ github.workspace }}/melange.rsa.pub
-      - uses: chainguard-images/actions/apko-publish@a32d54a799f0b2d2e5a75f94805b2509cc898ae8 # v1.0.37
+      - uses: chainguard-images/actions/apko-publish@8e701b320e7efcb120a1115de26e9fe833f86390 # v1.0.38
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref == 'refs/heads/main' }}
         id: build
         name: apko build
