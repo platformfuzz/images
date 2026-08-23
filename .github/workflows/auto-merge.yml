@@ -10,6 +10,8 @@ permissions:
   contents: write
   pull-requests: write
   checks: read
+  # Required so Dependabot bumps that edit workflow YAML can merge.
+  workflows: write
 
 jobs:
   auto-merge:
