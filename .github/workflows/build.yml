@@ -112,7 +112,7 @@ jobs:
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix-apko) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: chainguard-dev/actions/setup-melange@7bd1e94b2a1b7faa891392757de7d89489070c5c # v1.6.32
+      - uses: chainguard-dev/actions/setup-melange@a9d4aa7202a63f8a6b8f81bb1570a0ca54460ac5 # v1.6.34
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
