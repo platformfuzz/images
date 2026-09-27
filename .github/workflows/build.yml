@@ -197,12 +197,17 @@ jobs:
           COSIGN_YES: "true"
         run: |
           cosign sign ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} -y
-      - name: cosign download unsigned sbom
+      - uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        name: sbom generate
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: |
-          # apko attaches SBOMs per single-architecture variant, not at the
-          # multiarch index level, so download for a specific platform.
-          cosign download sbom --platform linux/amd64 ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }} > /tmp/sbom-spdx.json
+        with:
+          # Current apko publishes the image + index but no longer attaches an
+          # SBOM to the registry, so `cosign download sbom` finds nothing at the
+          # index or per-arch level. Generate the SBOM from the pushed image
+          # (Syft), matching build-docker, then attest it below.
+          image: ${{ fromJSON(toJSON(matrix)).destination }}@${{ steps.get-digests.outputs.destination }}
+          artifact-name: sbom-spdx.json
+          output-file: /tmp/sbom-spdx.json
       - name: cosign publish sbom blob as blob
         if: ${{ github.ref == 'refs/heads/main' }}
         env:
