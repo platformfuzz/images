@@ -125,7 +125,7 @@ jobs:
           echo name=date::$(date -u +%Y%m%d) >> $GITHUB_OUTPUT
           echo name=epoch::$(date -u +%s) >> $GITHUB_OUTPUT
         shell: bash
-      - uses: chainguard-dev/actions/melange-keygen@84b1be4c638f12d4256ddddef17af98853b6d0d9 # v1.6.40
+      - uses: chainguard-dev/actions/melange-keygen@3403a578b543fd3f0debdaef9dd989ae54e3fcef # v1.6.41
         name: melange generate signing keypair
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
         with:
