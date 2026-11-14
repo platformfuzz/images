@@ -137,7 +137,7 @@ jobs:
         run: |
           TAG="$DESTINATION"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
-      - uses: chainguard-dev/actions/melange-build-pkg@794a2c44abbbd7b3a186db97b359270e4105448f # v1.8.0
+      - uses: chainguard-dev/actions/melange-build-pkg@a25ce483d875a46f4c837e85e32e0fda602693f5 # v1.8.1
         name: melange apk build
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null }}
         with:
