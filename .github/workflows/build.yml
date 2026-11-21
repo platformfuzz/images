@@ -154,7 +154,7 @@ jobs:
           config: ${{ fromJSON(toJSON(matrix)).source }}
           source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
           keyring-append: ${{ github.workspace }}/melange.rsa.pub
-      - uses: chainguard-images/actions/apko-build@f3fe6194c29f66abe278166e718bb3ef20754a71 # v1.0.39
+      - uses: chainguard-images/actions/apko-build@44c0fd6adff42de34884b93fae6114aa731bea6f # v1.0.40
         id: build-with-signing-key-local
         name: apko build-with-signing-key local
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs != null && github.ref != 'refs/heads/main' }}
@@ -171,7 +171,7 @@ jobs:
           tag: ${{ fromJSON(toJSON(matrix)).destination }}
           config: ${{ fromJSON(toJSON(matrix)).source }}
           source-date-epoch: ${{ steps.snapshot-date.outputs.epoch }}
-      - uses: chainguard-images/actions/apko-build@f3fe6194c29f66abe278166e718bb3ef20754a71 # v1.0.39
+      - uses: chainguard-images/actions/apko-build@44c0fd6adff42de34884b93fae6114aa731bea6f # v1.0.40
         if: ${{ fromJSON(toJSON(matrix)).melangeConfigs == null && github.ref != 'refs/heads/main' }}
         id: build-local
         name: apko build local
